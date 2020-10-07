@@ -6,7 +6,7 @@ import SearchBar from "material-ui-search-bar";
 function App() {
   const [movieData, setMovieData] = useState([]);
   const [movieTitle, setMovieTitle] = useState("");
-  console.log(process.env.REACT_APP_API_KEY)
+
   const handleChange = (e) => {
     setMovieTitle(e.target.value.toLowerCase());
     console.log(e.target.value);
@@ -14,11 +14,12 @@ function App() {
 
   useEffect(()=>{
     const fetchData = async() => {
+      console.log("yo " + movieTitle)
       const result = await axios(
       `http://www.omdbapi.com/?s=${movieTitle}&page=1&apikey=${process.env.REACT_APP_API_KEY}`,
     );
     
-    if (movieTitle.length > 0) {
+    if (movieTitle.length > 2) {
       const searchResult = result.data.Search.filter(movies =>
         movies.Title.toLowerCase().includes(movieTitle) 
       )
@@ -26,20 +27,22 @@ function App() {
     } else {
       setMovieData(result.data.Search)
     }
+    
   }
     fetchData();
   },[movieTitle])
 
-  console.log(movieData)
   return (
     <div>
-    <h3>Movie Title</h3>
-    <SearchBar
-    value={movieTitle}
-    onChange={handleChange}
-    // onRequestSearch={() => doSomethingWith(this.state.value)}
-  />
-
+      <h3>Movie Title</h3>
+      <form>
+        <input
+        value={movieTitle}
+        onChange={handleChange}
+        type="text"
+        placeholder="Search By Name" 
+        />
+      </form>
     </div>
   );
 }
